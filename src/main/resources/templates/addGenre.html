@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Жанры</title>
+        <link type="text/css"/>
+    </head>
+    <body>
+        <h1>Добавить новый жанр:</h1>
+        <form th:action="@{/genre/add}" th:object="${genreForm}" th:method="POST">
+            Жанр:
+            <input type="text" name="name" />
+            <input type="submit" value="Сохранить" />
+        </form>
+    </body>
+</html>
