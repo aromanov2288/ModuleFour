@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Жанры</title>
+        <link type="text/css"/>
+    </head>
+    <body>
+        <h1>Редактировать жанр:</h1>
+        <p th:text="'Номер жанра:' + ${genre.id}"></p>
+        <form th:action="@{/genre/update(id=${genre.id})}" th:object="${genreForm}" th:method="PUT">
+            Название:
+            <input type="text" name="name" th:value="${genre.name}"/>
+            <br/>
+            <input type="submit" value="Сохранить" />
+        </form>
+        <form th:action="@{/genre/delete(id=${genre.id})}" th:method="DELETE">
+            <input type="submit" value="Удалить" />
+        </form>
+    </body>
+</html>
