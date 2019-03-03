@@ -3,18 +3,21 @@
     <head>
         <meta charset="UTF-8" />
         <title>Жанры</title>
-        <link type="text/css"/>
+        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/EditGenre.js"></script>
     </head>
     <body>
         <h1>Редактировать жанр:</h1>
-        <p th:text="'Номер жанра:' + ${genre.id}"></p>
-        <form th:action="@{/genre/update(id=${genre.id})}" th:object="${genreForm}" th:method="PUT">
+        <p th:text="'Номер жанра: ' + ${id}"></p>
+        <form id="editForm">
+            <input type="hidden" id="editId" th:value="${id}"/>
             Название:
-            <input type="text" name="name" th:value="${genre.name}"/>
+            <input type="text" id="name"/>
             <br/>
             <input type="submit" value="Сохранить" />
         </form>
-        <form th:action="@{/genre/delete(id=${genre.id})}" th:method="DELETE">
+        <form id="deleteForm">
+            <input type="hidden" id="deleteId" th:value="${id}"/>
             <input type="submit" value="Удалить" />
         </form>
     </body>

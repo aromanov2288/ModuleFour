@@ -2,7 +2,7 @@ package ru.romanov.modulefour.form;
 
 import java.util.Objects;
 
-public class BookForm {
+public class NewBook {
 
     private String author;
 
@@ -10,10 +10,10 @@ public class BookForm {
 
     private Long genreId;
 
-    public BookForm() {
+    public NewBook() {
     }
 
-    public BookForm(String author, String name, Long genreId) {
+    public NewBook(String author, String name, Long genreId) {
         this.author = author;
         this.name = name;
         this.genreId = genreId;
@@ -47,10 +47,10 @@ public class BookForm {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BookForm bookForm = (BookForm) o;
-        return Objects.equals(author, bookForm.author) &&
-                Objects.equals(name, bookForm.name) &&
-                Objects.equals(genreId, bookForm.genreId);
+        NewBook newBook = (NewBook) o;
+        return Objects.equals(author, newBook.author) &&
+                Objects.equals(name, newBook.name) &&
+                Objects.equals(genreId, newBook.genreId);
     }
 
     @Override

@@ -3,27 +3,23 @@
     <head>
         <meta charset="UTF-8" />
         <title>Жанры</title>
-        <link type="text/css"/>
+        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/AllGenres.js"></script>
     </head>
     <body>
         <h1>Список жанров</h1>
         <h2>
-            <a th:href="@{/genre/add}" th:method="GET">Добавить жанр</a>
+            <a th:href="@{/genres/add}" th:method="GET">Добавить жанр</a>
         </h2>
-        <div>
-            <table border="1">
-                <tr>
-                    <th>Номер</th>
-                    <th>Название</th>
-                </tr>
-                <tr th:each ="genre : ${allGenres}">
-                <td th:utext="${genre.id}">...</td>
-                <td th:utext="${genre.name}">...</td>
-                <td>
-                    <a th:href="@{/genre/edit(id=${genre.id})}" th:method="GET">Редактировать</a>
-                </td>
-                </tr>
-            </table>
-        </div>
+        <table class="genres">
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Название</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </body>
 </html>

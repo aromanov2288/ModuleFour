@@ -2,14 +2,14 @@ package ru.romanov.modulefour.form;
 
 import java.util.Objects;
 
-public class GenreForm {
+public class NewGenre {
 
     private String name;
 
-    public GenreForm() {
+    public NewGenre() {
     }
 
-    public GenreForm(String name) {
+    public NewGenre(String name) {
         this.name = name;
     }
 
@@ -25,8 +25,8 @@ public class GenreForm {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenreForm genreForm = (GenreForm) o;
-        return Objects.equals(name, genreForm.name);
+        NewGenre newGenre = (NewGenre) o;
+        return Objects.equals(name, newGenre.name);
     }
 
     @Override
