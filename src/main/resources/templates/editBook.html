@@ -3,24 +3,27 @@
     <head>
         <meta charset="UTF-8" />
         <title>Книги</title>
-        <link type="text/css"/>
+        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/EditBook.js"></script>
     </head>
     <body>
         <h1>Редактировать книгу:</h1>
-        <p th:text="'Номер книги:' + ${book.id}"></p>
-        <form th:action="@{/book/update(id=${book.id})}" th:object="${bookForm}" th:method="PUT">
+        <p th:text="'Номер книги: ' + ${id}"></p>
+        <form id="editForm">
+            <input type="hidden" id="editId" th:value="${id}"/>
             Автор:
-            <input type="text" name="author" th:value="${book.author}"/>
+            <input type="text" id="author"/>
             <br/>
             Название:
-            <input type="text" name="name" th:value="${book.name}"/>
+            <input type="text" id="name"/>
             <br/>
             Жанр:
-            <input type="text" name="genreId" th:value="${book.genre.id}"/>
+            <input type="text" id="genreId"/>
             <br/>
             <input type="submit" value="Сохранить" />
         </form>
-        <form th:action="@{/book/delete(id=${book.id})}" th:method="DELETE">
+        <form id="deleteForm">
+            <input type="hidden" id="deleteId" th:value="${id}"/>
             <input type="submit" value="Удалить" />
         </form>
     </body>

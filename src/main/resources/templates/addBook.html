@@ -3,19 +3,20 @@
     <head>
         <meta charset="UTF-8" />
         <title>Книги</title>
-        <link type="text/css"/>
+        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/AddBook.js"></script>
     </head>
     <body>
         <h1>Добавить новую книгу:</h1>
-        <form th:action="@{/book/add}" th:object="${bookForm}" th:method="POST">
+        <form id="addForm">
             Автор:
-            <input type="text" name="author" />
+            <input type="text" id="author" />
             <br/>
             Название:
-            <input type="text" name="name" />
+            <input type="text" id="name" />
             <br/>
             Жанр:
-            <input type="text" name="genreId" />
+            <input type="text" id="genreId" />
             <br/>
             <input type="submit" value="Сохранить" />
         </form>
