@@ -7,9 +7,10 @@ $( document ).ready(function() {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    author: $('#author').val(),
                     name: $('#name').val(),
-                    genreId: $('#genreId').val()
+                    genre: $('#genre').val(),
+                    fio: $('#fio').val(),
+                    year: $('#year').val()
                 }),
                 success: function (result) {
                     window.location.assign('/books/getAll');

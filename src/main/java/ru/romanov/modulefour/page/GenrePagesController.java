@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.romanov.modulefour.domain.Genre;
-import ru.romanov.modulefour.form.NewGenre;
-import ru.romanov.modulefour.repository.GenreRepository;
 
 @Controller
 @RequestMapping(value = {"/genres"})
@@ -20,14 +17,9 @@ public class GenrePagesController {
         return "allGenres";
     }
 
-    @RequestMapping(value = {"/add"}, method = RequestMethod.GET)
-    public String showAddGenrePage(Model model) {
-        return "addGenre";
-    }
-
     @RequestMapping(value = {"/edit"}, method = RequestMethod.GET)
-    public String showEditGenrePage(Model model, @RequestParam(value = "id") Long id) {
-        model.addAttribute("id", id);
+    public String showEditGenrePage(Model model, @RequestParam(value = "name") String name) {
+        model.addAttribute("name", name);
         return "editGenre";
     }
 }

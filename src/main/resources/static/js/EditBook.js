@@ -4,9 +4,10 @@ $(function () {
         {
             type: 'GET',
             success: function (book) {
-                $("#author").val(book.author);
                 $("#name").val(book.name);
-                $("#genreId").val(book.genre.id);
+                $("#genre").val(book.name);
+                $("#fio").val(book.author.fio);
+                $("#year").val(book.author.year);
             }
         }
     );
@@ -21,9 +22,10 @@ $( document ).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify({
                     id: $('#editId').val(),
-                    author: $('#author').val(),
                     name: $('#name').val(),
-                    genreId: $('#genreId').val()
+                    genre: $('#genre').val(),
+                    fio: $('#fio').val(),
+                    year: $('#year').val()
                 }),
                 success: function (result) {
                     window.location.assign('/books/getAll');

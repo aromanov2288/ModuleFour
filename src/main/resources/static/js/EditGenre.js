@@ -1,6 +1,6 @@
 $(function () {
     $.ajax(
-        '/api/genres/' + $('#editId').val(),
+        '/api/genres/' + $('#editName').val(),
         {
             type: 'GET',
             success: function (genre) {
@@ -17,7 +17,7 @@ $( document ).ready(function() {
             {
                 type: 'PUT',
                 contentType: 'application/json',
-                data: JSON.stringify({id: $('#editId').val(), name: $('#name').val()}),
+                data: JSON.stringify({editName: $('#editName').val(), name: $('#name').val()}),
                 success: function (result) {
                     window.location.assign('/genres/getAll');
                 }
@@ -27,7 +27,7 @@ $( document ).ready(function() {
     $('#deleteForm').submit(function (event) {
         event.preventDefault();
         $.ajax(
-            '/api/genres/' + $('#deleteId').val(),
+            '/api/genres/' + $('#deleteName').val(),
             {
                 type: 'DELETE',
                 success: function (result) {

@@ -4,10 +4,10 @@ $( document ).ready(function() {
             books.forEach(function (book) {
                 $('tbody').append(`
                     <tr>
-                        <td>${book.id}</td>
-                        <td>${book.author}</td>
                         <td>${book.name}</td>
-                        <td>${book.genre.name}</td>
+                        <td>${book.genre}</td>
+                        <td>${book.author.fio}</td>
+                        <td>${book.author.year}</td>
                         <td>
                             <a href="/books/edit?id=${book.id}">Редактировать</a>
                         </td>
