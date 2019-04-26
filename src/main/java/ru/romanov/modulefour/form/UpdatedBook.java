@@ -2,28 +2,33 @@ package ru.romanov.modulefour.form;
 
 public class UpdatedBook {
 
-    private Long id;
-
-    private String author;
+    private String id;
 
     private String name;
 
-    private Long genreId;
+    private String genre;
 
-    public Long getId() {
+    private String fio;
+
+    private Integer year;
+
+    public UpdatedBook() {
+    }
+
+    public UpdatedBook(String id, String name, String genre, String fio, Integer year) {
+        this.id = id;
+        this.name = name;
+        this.genre = genre;
+        this.fio = fio;
+        this.year = year;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getName() {
@@ -34,11 +39,27 @@ public class UpdatedBook {
         this.name = name;
     }
 
-    public Long getGenreId() {
-        return genreId;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setGenreId(Long genreId) {
-        this.genreId = genreId;
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getFio() {
+        return fio;
+    }
+
+    public void setFio(String fio) {
+        this.fio = fio;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 }

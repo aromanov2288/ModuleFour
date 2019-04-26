@@ -4,56 +4,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.romanov.modulefour.domain.Book;
 import ru.romanov.modulefour.domain.Genre;
-import ru.romanov.modulefour.form.NewGenre;
 import ru.romanov.modulefour.form.UpdatedGenre;
-import ru.romanov.modulefour.repository.GenreRepository;
-
-import java.util.List;
+import ru.romanov.modulefour.repository.BookRepository;
 
 @RestController
 @RequestMapping(value = {"/api/genres"})
 public class GenreRestController {
 
-    private GenreRepository genreRepository;
+    private BookRepository bookRepository;
 
     @Autowired
-    public GenreRestController(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
+    public GenreRestController(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     @GetMapping
-    public List<Genre> getAll() {
-        return genreRepository.findAll();
+    public Flux<Genre> getAll() {
+        return bookRepository.findAllGenres().distinct();
     }
 
-    @PostMapping
-    public Genre addGenre(@RequestBody NewGenre newGenre) {
-        String name = newGenre.getName();
-        return genreRepository.save(new Genre(name));
-    }
-
-    @GetMapping(value = "{id}")
-    public Genre getGenreById(@PathVariable(value = "id") Long id) {
-        return genreRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Genre with id %d not found", id)));
+    @GetMapping(value = "{name}")
+    public Mono<Genre> getGenreById(@PathVariable(value = "name") String name) {
+        return Mono.just(new Genre(name));
     }
 
     @PutMapping
-    public Genre updateGenre(@RequestBody UpdatedGenre updatedGenre) {
-        Long id = updatedGenre.getId();
-        String name = updatedGenre.getName();
-        return genreRepository.save(new Genre(id, name));
+    public Mono<Void> updateGenre(@RequestBody UpdatedGenre updatedGenre) {
+        String editName = updatedGenre.getEditName();
+        String  name = updatedGenre.getName();
+        return bookRepository.findAllByGenreLike(editName).map(book -> {
+            book.setGenre(name);
+            return book;
+        }).flatMap(book -> bookRepository.save(book)).then();
     }
 
-    @DeleteMapping(value = "{id}")
-    public void deleteGenreById(@PathVariable(value = "id") Long id) {
-        genreRepository.deleteById(id);
+    @DeleteMapping(value = "{genre}")
+    public Mono<Void> deleteGenreById(@PathVariable(value = "genre") String genre) {
+        return bookRepository.deleteAll(bookRepository.findAllByGenreLike(genre));
     }
 }

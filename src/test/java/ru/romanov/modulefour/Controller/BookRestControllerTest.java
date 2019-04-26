@@ -1,114 +1,106 @@
 package ru.romanov.modulefour.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.romanov.modulefour.domain.Author;
 import ru.romanov.modulefour.domain.Book;
-import ru.romanov.modulefour.domain.Genre;
 import ru.romanov.modulefour.form.NewBook;
+import ru.romanov.modulefour.form.UpdatedBook;
 import ru.romanov.modulefour.repository.BookRepository;
-import ru.romanov.modulefour.repository.GenreRepository;
 import ru.romanov.modulefour.rest.BookRestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(BookRestController.class)
+@WebFluxTest(BookRestController.class)
 public class BookRestControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webClient;
 
     @MockBean
     private BookRepository bookRepository;
 
-    @MockBean
-    private GenreRepository genreRepository;
-
+    private ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     @Test
     public void getAllTest() throws Exception {
-        Genre genre = new Genre(1L, "Genre1");
-        Book book1 = new Book(1L, "Pushkin", "Name1", genre);
-        Book book2 = new Book(2L, "Lermontov", "Name2", genre);
+        Book book1 = new Book("aaa", "Name1","Genre1", new Author("Pushkin", 1800));
+        Book book2 = new Book("bbb", "Name2","Genre2", new Author("Lermontov", 1800));
         List<Book> booksList = new ArrayList<>(Arrays.asList(book1, book2));
-        when(bookRepository.findAll()).thenReturn(booksList);
-        String jsonResponse = "[{\"id\":1,\"author\":\"Pushkin\",\"name\":\"Name1\",\"genre\":{\"id\":1,\"name\":\"Genre1\"}},"
-                + "{\"id\":2,\"author\":\"Lermontov\",\"name\":\"Name2\",\"genre\":{\"id\":1,\"name\":\"Genre1\"}}]";
+        when(bookRepository.findAll()).thenReturn(Flux.fromIterable(booksList));
+        String jsonResponse = objectWriter.writeValueAsString(booksList);
 
-        mockMvc.perform(get("/api/books"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(jsonResponse));
+        webClient.get().uri("/api/books")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody().json(jsonResponse);
     }
 
     @Test
     public void addBookTest() throws Exception {
-        Long genreId = 1L;
-        NewBook newBook = new NewBook("Pushkin", "BookName", genreId);
-        Genre genre = new Genre(genreId, "Genre");
-        when(genreRepository.findById(genreId)).thenReturn(Optional.of(genre));
-        when(bookRepository.save(new Book("Pushkin", "BookName", genre)))
-                .thenReturn(new Book(1L, "Pushkin", "BookName", genre));
-        String jsonRequest = "{\"author\":\"Pushkin\",\"name\":\"BookName\",\"genreId\":1}";
-        String jsonResponse = "{\"id\":1,\"author\":\"Pushkin\",\"name\":\"BookName\",\"genre\":{\"id\":1,\"name\":\"Genre\"}}";
+        NewBook newBook = new NewBook("BookName", "Genre", "Pushkin", 1800);
+        Book bookForSave = new Book("BookName", "Genre", new Author("Pushkin", 1800));
+        Book savedBook = new Book("aaa", "BookName", "Genre", new Author("Pushkin", 1800));
+        when(bookRepository.save(bookForSave))
+                .thenReturn(Mono.just(savedBook));
+        String jsonResponse = objectWriter.writeValueAsString(savedBook);
 
-        mockMvc.perform(post("/api/books").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonRequest))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(jsonResponse));
+        webClient.post().uri("/api/books").body(BodyInserters.fromObject(newBook))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody().json(jsonResponse);
     }
 
     @Test
     public void getByIdTest() throws Exception {
-        Genre genre = new Genre(1L, "Genre1");
-        Book book = new Book(1L, "Pushkin", "Name1", genre);
-        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        String jsonResponse = "{\"id\":1,\"author\":\"Pushkin\",\"name\":\"Name1\",\"genre\":{\"id\":1,\"name\":\"Genre1\"}}";
+        Book book = new Book("aaa", "BookName", "Genre", new Author("Pushkin", 1800));
+        when(bookRepository.findById("aaa")).thenReturn(Mono.just(book));
+        String jsonResponse = objectWriter.writeValueAsString(book);
 
-        mockMvc.perform(get("/api/books/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(jsonResponse));
+        webClient.get().uri("/api/books/aaa")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody().json(jsonResponse);
     }
 
     @Test
-    public void UpdateBookTest() throws Exception {
-        Long genreId = 1L;
-        Genre genre = new Genre(genreId, "Genre");
-        when(genreRepository.findById(genreId)).thenReturn(Optional.of(genre));
-        when(bookRepository.save(new Book(genreId, "Pushkin", "BookName", genre)))
-                .thenReturn(new Book(genreId, "Pushkin", "BookName", genre));
-        String jsonRequest = "{\"id\":1,\"author\":\"Pushkin\",\"name\":\"BookName\",\"genreId\":1}";
-        String jsonResponse = "{\"id\":1,\"author\":\"Pushkin\",\"name\":\"BookName\",\"genre\":{\"id\":1,\"name\":\"Genre\"}}";
+    public void updateBookTest() throws Exception {
+        UpdatedBook updatedBook = new UpdatedBook("aaa", "BookName", "Genre", "Pushkin", 1800);
+        Book book = new Book("aaa", "BookName", "Genre", new Author("Pushkin", 1800));
+        when(bookRepository.save(book))
+                .thenReturn(Mono.just(book));
+        String jsonResponse = objectWriter.writeValueAsString(book);
 
-        mockMvc.perform(put("/api/books").contentType(MediaType.APPLICATION_JSON_UTF8).content(jsonRequest))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(jsonResponse));
+        webClient.put().uri("/api/books").body(BodyInserters.fromObject(updatedBook))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody().json(jsonResponse);
     }
 
     @Test
     public void deleteBookById() throws Exception {
-        mockMvc.perform(delete("/api/books/1"))
-                .andExpect(status().isOk());
-        verify(bookRepository).deleteById(1L);
+        webClient.delete().uri("/api/books/aaa").exchange().expectStatus().isOk();
+        verify(bookRepository).deleteById("aaa");
     }
 }

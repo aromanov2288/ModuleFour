@@ -2,16 +2,16 @@ package ru.romanov.modulefour.form;
 
 public class UpdatedGenre {
 
-    private Long id;
+    private String editName;
 
     private String name;
 
-    public Long getId() {
-        return id;
+    public String getEditName() {
+        return editName;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEditName(String editName) {
+        this.editName = editName;
     }
 
     public String getName() {
